@@ -159,10 +159,22 @@ if [[ "${SubDomain}.${MainDomain}" != "${domain}" ]] ; then
 fi
 ###############################Install Packages#########################################################
 $Pak -y update
+
+# Add the official NGINX repository
+sudo curl -fsSL https://nginx.org/keys/nginx_signing.key | sudo apt-key add -
+sudo sh -c 'echo "deb http://nginx.org/packages/ubuntu/ $(lsb_release -cs) nginx" > /etc/apt/sources.list.d/nginx.list'
+
+# Update package list after adding NGINX repository
+$Pak -y update
+
+# Install packages, including NGINX with the Stream module enabled
 for pkg in epel-release cronie psmisc unzip curl nginx certbot python3-certbot-nginx sqlite sqlite3 jq openssl tor tor-geoipdb; do
   dpkg -l "$pkg" &> /dev/null || rpm -q "$pkg" &> /dev/null || $Pak -y install "$pkg"
 done
+
+# Enable services
 service_enable "nginx" "tor" "cron" "crond"
+
 ############################### Get nginx Ver and Stop ##################################################
 vercompare() { 
 	if [ "$1" = "$2" ]; then echo "E"; return; fi
