@@ -219,7 +219,8 @@ worker_rlimit_nofile 65535;
 events { worker_connections 65535; use epoll; multi_accept on; }
 http {
 	access_log /var/log/nginx/access.log;
-	error_log /var/log/nginx/error.log;
+	server_names_hash_bucket_size 128;
+ 	error_log /var/log/nginx/error.log;
 	gzip on;sendfile on;tcp_nopush on;
 	types_hash_max_size 4096;
 	default_type application/octet-stream;
